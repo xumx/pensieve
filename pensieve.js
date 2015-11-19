@@ -177,20 +177,20 @@ if (Meteor.isClient) {
 
 
         //Walls
-        World.add(_engine.world, [
-            Bodies.rectangle(3, 3, 2, window.innerHeight * 2, {
-                isStatic: true
-            }),
-            Bodies.rectangle(3, 3, window.innerWidth * 2, 2, {
-                isStatic: true
-            }),
-            Bodies.rectangle(10, window.innerHeight - 5, window.innerWidth * 2, 2, {
-                isStatic: true
-            }),
-            Bodies.rectangle(window.innerWidth - 5, 10, 2, window.innerHeight * 2, {
-                isStatic: true
-            })
-        ]);
+        // World.add(_engine.world, [
+        //     Bodies.rectangle(3, 3, 2, window.innerHeight * 2, {
+        //         isStatic: true
+        //     }),
+        //     Bodies.rectangle(3, 3, window.innerWidth * 2, 2, {
+        //         isStatic: true
+        //     }),
+        //     Bodies.rectangle(10, window.innerHeight - 5, window.innerWidth * 2, 2, {
+        //         isStatic: true
+        //     }),
+        //     Bodies.rectangle(window.innerWidth - 5, 10, 2, window.innerHeight * 2, {
+        //         isStatic: true
+        //     })
+        // ]);
 
         World.add(_engine.world, [_mouseConstraint, recordButton, deleteButton]);
 
@@ -231,7 +231,7 @@ if (Meteor.isClient) {
 
         // run the engine
         Engine.run(_engine);
-        // Demo.initControls();
+        Demo.initControls();
     };
 }
 
