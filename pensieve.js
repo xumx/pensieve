@@ -14,23 +14,79 @@ if (Meteor.isClient) {
             }
         }
 
+        recordButton = Bodies.circle(window.innerWidth / 2, window.innerHeight / 2 + 180, 32, {
+            isStatic: true,
+            label: "record",
+            render: {
+                fillStyle: "transparent",
+                strokeStyle: "white",
+                lineWidth: 3
+            }
+        });
 
+        recordButton.label = "record";
+
+        deleteButton = Bodies.circle(window.innerWidth - 50, window.innerHeight - 50, 35, {
+            render: {
+                fillStyle: "transparent",
+                strokeStyle: "#C03546",
+                lineWidth: 3
+            },
+            isStatic: true,
+            label: "delete"
+        });
+
+    }
+
+    p.toggleChildren = function (node) {
+        if (node.folded) {
+            p.children(node, true)
+        } else {
+            p.children(node, false)
+        }
+
+        node.folded = !node.folded
+    }
+
+    p.children = function(node, visible) {
+        var edges = _.filter(_engine.world.constraints, function(edge) {
+            return edge.bodyA && edge.bodyA.id == node.id
+        });
+
+        var childNodes = _.map(edges, function(edge){
+            return edge.bodyB
+        });
+
+        //Recursion
+        _.each(childNodes, function(childNode){
+
+            p.children(childNode, visible)
+
+        });
+
+        _.each(childNodes, function (childNode) {
+            childNode.render.visible = visible
+        });
+
+        _.each(edges, function (edge) {
+            edge.render.visible = visible
+        });
     }
 
     p.select = function(body) {
         if (p.selected) {
             p.selected.render.lineWidth = 1
-            Body.scale(p.selected, 0.9, 0.9)
+            p.selected.circleRadius = 30
         }
 
         p.selected = body
-        p.selected.render.lineWidth = 3
-        Body.scale(p.selected, 1.1, 1.1)
+        p.selected.render.lineWidth = 4
+        p.selected.circleRadius = 35
     }
 
     p.delete = function() {
         if (p.selected) {
-            Composite.remove(_engine.world, p.selected, true);
+            World.remove(_engine.world, p.selected, true);
         }
     }
 
@@ -45,7 +101,7 @@ if (Meteor.isClient) {
             y: window.innerHeight / 2 + 180
         }
 
-        var node = Bodies.circle(origin.x, origin.y, 30, {
+        var node = Bodies.circle(origin.x, origin.y - 1, 30, {
             render: {
                 fillStyle: color
             }
@@ -61,10 +117,10 @@ if (Meteor.isClient) {
         var edge = Constraint.create({
             bodyA: bodyA,
             bodyB: node,
-            length: 150,
-            stiffness: 0.02,
+            length: 100,
+            stiffness: 0.005,
             render: {
-                strokeStyle: color,
+                strokeStyle: color || "#FFF",
                 lineWidth: 1
             }
         });
@@ -119,27 +175,6 @@ if (Meteor.isClient) {
         _mouseConstraint = MouseConstraint.create(_engine);
         // _mouseConstraint.constraint.render.lineWidth = 0;
 
-        var recordButton = Bodies.circle(window.innerWidth / 2, window.innerHeight / 2 + 180, 32, {
-            isStatic: true,
-            label: "record",
-            render: {
-                fillStyle: "transparent",
-                strokeStyle: "white",
-                lineWidth: 3
-            }
-        });
-
-        recordButton.label = "record";
-
-        var deleteButton = Bodies.circle(window.innerWidth - 50, window.innerHeight - 50, 35, {
-            render: {
-                fillStyle: "transparent",
-                strokeStyle: "#C03546",
-                lineWidth: 3
-            },
-            isStatic: true,
-            label: "delete"
-        });
 
         //Walls
         World.add(_engine.world, [
@@ -184,7 +219,12 @@ if (Meteor.isClient) {
                 if (body.id == recordButton.id) return;
 
                 if (Bounds.contains(body.bounds, mouse.position) && Vertices.contains(body.vertices, mouse.position)) {
-                    p.select(body)
+
+                    if (p.selected == body) {
+                        p.toggleChildren(body)
+                    } else {
+                        p.select(body)    
+                    }
                 }
             });
         });

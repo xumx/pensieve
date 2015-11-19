@@ -1,7 +1,4 @@
 .DS_Store
 *.sublime-project
 *.sublime-workspace
-.meteor/local/build/*
-.meteor/local/db/*
-packages/OmniSearch/.git
 mup.json
