@@ -1,4 +1,4 @@
-var graphiq = [];
+graphiq = [];
 
 graphiq.push({
     title: 'Facebook Inc. (FB)',
