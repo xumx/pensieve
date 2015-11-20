@@ -182,6 +182,11 @@ if (Meteor.isClient) {
             });
         });
     }
+    p.watsonR = function(url){
+        Meteor.call('getRelations' , url , function(err,res){
+            console.log(res)
+        })
+    }
 
     p.fix = function(body, data) {
         body.isStatic = !body.isStatic

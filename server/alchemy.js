@@ -28,42 +28,33 @@ Meteor.methods({
         return entities;
     },
 
-    // getRelations : function(entityArray){
-    //     var params = {
-    //         url: 'http://www.businessinsider.com/heres-how-to-get-a-job-at-facebook-2014-12'
-    //         //url: link
-    //     };
-    //     var entities;
-    //     wrappedRelations(params,function (err, response){
-    //       //  console.log('hi');
-    //      if (err)
-    //         console.log('error:', err);
-    //     else{
+    getRelations : function(url,callback){
+        var entityRelations = [];
 
-    //         for (var i = 0; i < entityArray.length; i++) {
-    //             entities
-    //         };
-            
-    //         for(var i=0;i<response.relations.length;i++){
-    //             for(var j=0;j<entities.length;j++){
-    //                 var punctuationless = response.relations[i].subject.text.replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
-    //                 var finalStringA = punctuationless.replace(/\s{2,}/g," ");
-    //                 var punctuationless2 = entities[j].replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
-    //                 var finalStringB = punctuationless2.replace(/\s{2,}/g," ");                
-    //                 if(finalStringB===finalStringA)
-    //                     var entity = entityArray[j];
-    //                     entityArray[j] = {
-    //                         relations: [
-    //                         {
-
-    //                         }]
-    //                     }
-    //                     relations.push(response.relations[i].object.text);
-    //                 }
-    //             }
-    //         }
-    //     });
-    // console.log(JSON.stringify(entities));
-    // return entities;
-    // }
+        var params = {
+            url: url
+        };
+        Meteor.call('getEntities', url, function(err, res){
+            entities = res;
+        });
+        for(var j=0;j<entities.length;j++){
+            entityRelations.push({
+                key  : entities[i],
+                relations : []
+            })   
+        }
+        var response = wrappedRelations(params);
+        for(var i=0;i<response.relations.length;i++){
+            for(var j=0;j<entities.length;j++){
+                var punctuationless = response.relations[i].subject.text.replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+                var finalStringA = punctuationless.replace(/\s{2,}/g," ");
+                var punctuationless2 = entities[j].replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+                var finalStringB = punctuationless2.replace(/\s{2,}/g," ");                
+                if(finalStringB===finalStringA)
+                    entityRelations[j].relations.push(response.relations[i].object.text);
+            }
+        }
+        console.log(JSON.stringify(entityRelations,null,2));
+        return entityRelations;
+    }
 });
