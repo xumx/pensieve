@@ -6,27 +6,70 @@ if (Meteor.isClient) {
     p.nodes = [];
     p.selected = null;
 
+    p.expand = function (transcript, label) {
+        Meteor.call('getIntent', transcript, function (err, res) {
+            console.log(res);
+            var intent = res.outcomes[0].intent;
+            var entities = res.outcomes[0].entities;
+            console.log('Executing %s with [%s]', intent, label);
+
+            switch (intent) {
+
+                case 'visualise':
+                    var entity = entities ? entities['what_to_visualise'][0].value : undefined;
+                    console.log('entity = ' + entity);
+                    var result = _.find(graphiq, function (obj) {
+                        if (obj.title.search(new RegExp(label, 'i')) >= 0 && obj.title.search(new RegExp(entity, 'i')) >= 0) {
+                            return obj;
+                        }
+                    })
+                    console.log(result);
+
+                    //use result to display UI
+
+                    break;
+
+
+                case 'news':
+                    prismatic.news(label, function (err, res) {
+                        console.log(res);   //JSON
+                    })
+
+                    prismatic.newsUrl(label, function (err, res) {
+                        console.log(res);   //URL
+                    })
+                    break;
+
+            }
+        });
+    }
+
     p.init = function() {
         recognition = new webkitSpeechRecognition();
         recognition.onresult = function(event) {
             console.log(event);
 
             if (event.results.length > 0) {
-                alert(event.results[0][0].transcript);
+                var transcript = event.results[0][0].transcript;
+                p.expand(transcript, p.selected.label);   //returns JSON containing type of intent executed and data
             }
         }
 
         recordButton = Bodies.circle(window.innerWidth / 2, window.innerHeight / 2, 20, {
             isStatic: true,
-            label: "record",
             render: {
                 fillStyle: "transparent",
-                strokeStyle: "white",
-                lineWidth: 5
+                lineWidth: 0,
+                sprite: {
+                    xScale: 0.4,
+                    yScale: 0.4,
+                    texture: "/core.png"
+                }
             }
         });
 
-        recordButton.label = "record";
+        recordButton.label = "core"
+
 
         deleteButton = Bodies.circle(window.innerWidth - 50, window.innerHeight - 50, 35, {
             render: {
@@ -37,9 +80,6 @@ if (Meteor.isClient) {
             isStatic: true,
             label: "delete"
         });
-
-        // button1 = Bodies.
-
     }
 
     p.toggleMenu = function(node) {
@@ -106,15 +146,24 @@ if (Meteor.isClient) {
 
     p.select = function(body) {
         if (p.selected) {
-            p.selected.render.lineWidth = 1
-            p.selected.circleRadius = 15
+            p.selected.render.lineWidth = 0
+            p.selected.circleRadius = 20
         }
 
         p.selected = body
         p.selected.render.lineWidth = 4
         p.selected.circleRadius = 20
 
-        Session.set("selected", "")
+        Session.set("selected", Math.random())
+    }
+
+    p.deselect = function() {
+        if (p.selected) {
+            p.selected.render.lineWidth = 0
+            p.selected.circleRadius = 20
+        }
+
+        Session.set("selected", Math.random())
     }
 
     p.delete = function() {
@@ -199,16 +248,45 @@ if (Meteor.isClient) {
 
     p.newNode = function(text, data) {
         var color = p.selected ? p.selected.render.fillStyle : null;
-        var target = p.selected ? p.selected.position : {
-            x: window.innerWidth / 2,
-            y: window.innerHeight / 2 + 180
-        }
+        var target = {}
+
+        var core = p.selected || _.findWhere(_engine.world.bodies, {
+            label: 'core'
+        });
 
         if (p.selected && p.parentEdge(p.selected)) {
             var parentEdge = p.parentEdge(p.selected)
             var shoot = Vector.normalise(Vector.sub(parentEdge.bodyA.position, parentEdge.bodyB.position))
-            target.x += shoot.x * 5
-            target.y += shoot.y * 5
+            target.x = p.selected.position.x - shoot.x * 5
+            target.y = p.selected.position.y - shoot.y * 5
+        } else {
+            target.x = window.innerWidth / 2;
+            target.y = window.innerHeight / 2;
+
+            var level1 = _.filter(_engine.world.constraints, function(edge, key, list) {
+                return edge.bodyA && edge.bodyA == core;
+            });
+
+            var v = {
+                x: 0,
+                y: -100
+            }
+
+            if (level1.length == 0) {
+                v = Vector.rotate(v, 0)
+            } else if (level1.length == 1) {
+                v = Vector.rotate(v, Math.PI / 3)
+            } else if (level1.length == 2) {
+                v = Vector.rotate(v, Math.PI / 3 * 2)
+            } else if (level1.length == 3) {
+                v = Vector.rotate(v, Math.PI)
+            } else if (level1.length == 4) {
+                v = Vector.rotate(v, -Math.PI / 3 * 2)
+            } else if (level1.length == 5) {
+                v = Vector.rotate(v, -Math.PI / 3)
+            }
+
+            target = Vector.add(target, v);
         }
 
         var node = Bodies.circle(target.x, target.y, 20, {
@@ -220,13 +298,8 @@ if (Meteor.isClient) {
         node.label = text || "Brilliant idea";
         node.data = data;
 
-        var bodyA = p.selected || _.findWhere(_engine.world.bodies, {
-            label: 'record'
-        });
-
-
         var edge = Constraint.create({
-            bodyA: bodyA,
+            bodyA: core,
             bodyB: node,
             length: 150,
             label: "edge",
@@ -257,6 +330,12 @@ if (Meteor.isClient) {
         selected: function() {
             Session.get("selected")
             return p.selected;
+        },
+        offsetX: function(value) {
+            return value + 50;
+        },
+        offsetY: function(value) {
+            return value - 50;
         }
     });
 
@@ -276,7 +355,7 @@ if (Meteor.isClient) {
             enableSleeping: false,
             render: {
                 options: {
-                    background: "#55df98",
+                    background: "#00C4C0",
                     showIds: true,
                     wireframes: false
                 }
@@ -362,11 +441,7 @@ if (Meteor.isClient) {
 
             if (Bounds.contains(recordButton.bounds, mouse.position) && Vertices.contains(recordButton.vertices, mouse.position)) {
 
-
-                p.newNode("Something", {
-                    title: "Elon Musk",
-                    description: "Works at SpaceX & Tesla Lived in Los Angeles"
-                });
+                p.newNode("Something");
 
                 return
             }
@@ -377,18 +452,27 @@ if (Meteor.isClient) {
                 return
             }
 
-            _.each(_engine.world.bodies, function(body) {
+
+            var touched = _.some(_engine.world.bodies, function(body) {
                 if (body.id == recordButton.id) return;
 
                 if (Bounds.contains(body.bounds, mouse.position) && Vertices.contains(body.vertices, mouse.position)) {
 
                     if (p.selected == body) {
                         p.toggleChildren(body)
+                        return true;
                     } else {
                         p.select(body)
+                        return true;
                     }
+                } else {
+                    return false;
                 }
             });
+
+            if (!touched) {
+                p.deselect();
+            }
         });
 
         // run the engine
