@@ -2,40 +2,40 @@ graphiq = [];
 
 graphiq.push({
     title: 'Facebook Inc. (FB)',
-    embed: '<div class="ftb-widget" data-width="700" data-height="516" data-widget-id="eTafNW6VuYd" data-href="http://listings.findthecompany.com/l/14143267/Facebook-Inc-in-Menlo-Park-CA" ><a href="http://listings.findthecompany.com/l/14143267/Facebook-Inc-in-Menlo-Park-CA" target="_blank"  style="font:14px/16px arial;color:#3d3d3d;">Facebook Inc. (FB) | FindTheCompany</a></div><script async src="https://s.graphiq.com/rx/widgets.js"></script>'
+    embed: '<iframe seamless src="https://w.graphiq.com/w/232XrYdU9xP" width="700" height="516" frameborder="0" scrolling="no" style="position:static;vertical-align:top;margin:0 auto;display:block;width:700px !important;max-width:100%;min-height:516px;"></iframe >'
 })
 
 graphiq.push({
-    title: 'Facebook Inc. (FB) Quarterly Net Income',
-    embed: '<div class="ftb-widget" data-width="650" data-height="487" data-widget-id="7C23sjfImF" data-href="http://listings.findthecompany.com/l/14143267/Facebook-Inc-in-Menlo-Park-CA" ><a href="http://listings.findthecompany.com/l/14143267/Facebook-Inc-in-Menlo-Park-CA" target="_blank"  style="font:14px/16px arial;color:#3d3d3d;">Facebook Inc. (FB) Quarterly Net Income | FindTheCompany</a></div><script async src="https://s.graphiq.com/rx/widgets.js"></script>'
+    title: 'Facebook Inc. (FB) Quarterly Revenue',
+    embed: '<iframe seamless src="https://w.graphiq.com/w/ai3jxJ8t0CV" width="650" height="487" frameborder="0" scrolling="no" style="position:static;vertical-align:top;margin:0 auto;display:block;width:650px !important;max-width:100%;min-height:487px;"></iframe >'
 })
 
 graphiq.push({
     title: 'Facebook Inc.\'s Timeline',
-    embed: '<div class="ftb-widget" data-width="725" data-height="677" data-widget-id="jlXwWdLTIdT" data-href="http://listings.findthecompany.com/l/14143267/Facebook-Inc-in-Menlo-Park-CA" ><a href="http://listings.findthecompany.com/l/14143267/Facebook-Inc-in-Menlo-Park-CA" target="_blank"  style="font:14px/16px arial;color:#3d3d3d;">Facebook Inc.\'s Timeline | FindTheCompany</a></div><script async src="https://s.graphiq.com/rx/widgets.js"></script>'
+    embed: '<iframe seamless src="https://w.graphiq.com/w/95wYeNV3g8t" width="725" height="677" frameborder="0" scrolling="no" style="position:static;vertical-align:top;margin:0 auto;display:block;width:725px !important;max-width:100%;min-height:677px;"></iframe>'
 })
 
 graphiq.push({
     title: 'Facebook Inc.\'s Acquisitions (Since 2006)',
-    embed: '<div class="ftb-widget" data-width="860" data-height="433" data-widget-id="7G2bYoOr01v" data-href="http://listings.findthecompany.com/l/14143267/Facebook-Inc-in-Menlo-Park-CA" ><a href="http://listings.findthecompany.com/l/14143267/Facebook-Inc-in-Menlo-Park-CA" target="_blank"  style="font:14px/16px arial;color:#3d3d3d;">Facebook Inc.\'s Acquisitions (Since 2006) | FindTheCompany</a></div><script async src="https://s.graphiq.com/rx/widgets.js"></script>'
+    embed: '<iframe seamless src="https://w.graphiq.com/w/eAcxDjc5Pwx" width="860" height="433" frameborder="0" scrolling="no" style="position:static;vertical-align:top;margin:0 auto;display:block;width:860px !important;max-width:100%;min-height:433px;"></iframe>'
 })
 
 graphiq.push({
     title: 'Facebook Inc. - Top Occupations for H-1B Visa LCAs',
-    embed: '<div class="ftb-widget" data-width="600" data-height="400" data-widget-id="daHLmU5tzpz" data-href="http://foreign-employment.findthedata.com/l/12658/Facebook-Inc" ><a href="http://foreign-employment.findthedata.com/l/12658/Facebook-Inc" target="_blank"  style="font:14px/16px arial;color:#3d3d3d;">Facebook Inc. - Top Occupations for H-1B Visa LCAs  | FindTheData</a></div><script async src="https://s.graphiq.com/rx/widgets.js"></script>'
+    embed: '<iframe seamless src="https://w.graphiq.com/w/6ay8uQGbA5n" width="600" height="400" frameborder="0" scrolling="no" style="position:static;vertical-align:top;margin:0 auto;display:block;width:600px !important;max-width:100%;min-height:400px;"></iframe>'
 })
 
 graphiq.push({
     title: 'Google Inc. (GOOGL)',
-    embed: '<div class="ftb-widget" data-width="700" data-height="522" data-widget-id="lpI7sF02quF" data-href="http://listings.findthecompany.com/l/8520977/Google-Inc-in-Mountain-View-CA" ><a href="http://listings.findthecompany.com/l/8520977/Google-Inc-in-Mountain-View-CA" target="_blank"  style="font:14px/16px arial;color:#3d3d3d;">Google Inc. (GOOGL) | FindTheCompany</a></div><script async src="https://s.graphiq.com/rx/widgets.js"></script>'
+    embed: '<iframe seamless src="https://w.graphiq.com/w/h9ThhRegIRv" width="700" height="522" frameborder="0" scrolling="no" style="position:static;vertical-align:top;margin:0 auto;display:block;width:700px !important;max-width:100%;min-height:522px;"></iframe>'
 })
 
 graphiq.push({
     title: 'Google Inc.\'s Acquisitions (Since 2006)',
-    embed: '<div class="ftb-widget" data-width="860" data-height="433" data-widget-id="fV2y49IZR6B" data-href="http://listings.findthecompany.com/l/8520977/Google-Inc-in-Mountain-View-CA" ><a href="http://listings.findthecompany.com/l/8520977/Google-Inc-in-Mountain-View-CA" target="_blank"  style="font:14px/16px arial;color:#3d3d3d;">Google Inc.\'s Acquisitions (Since 2006) | FindTheCompany</a></div><script async src="https://s.graphiq.com/rx/widgets.js"></script>'
+    embed: '<iframe seamless src="https://w.graphiq.com/w/8USVc6jHRMp" width="860" height="433" frameborder="0" scrolling="no" style="position:static;vertical-align:top;margin:0 auto;display:block;width:860px !important;max-width:100%;min-height:433px;"></iframe>'
 })
 
 graphiq.push({
     title: 'Google Inc. (GOOGL) Stock Price - Trailing Year',
-    embed: '<div class="ftb-widget" data-width="600" data-height="487" data-widget-id="k2xJ72bhhE9" data-href="http://listings.findthecompany.com/l/8520977/Google-Inc-in-Mountain-View-CA" ><a href="http://listings.findthecompany.com/l/8520977/Google-Inc-in-Mountain-View-CA" target="_blank"  style="font:14px/16px arial;color:#3d3d3d;">Google Inc. (GOOGL) Stock Price - Trailing Year | FindTheCompany</a></div><script async src="https://s.graphiq.com/rx/widgets.js"></script>'
+    embed: '<iframe seamless src="https://w.graphiq.com/w/jUe3Z6RN0yx" width="600" height="487" frameborder="0" scrolling="no" style="position:static;vertical-align:top;margin:0 auto;display:block;width:600px !important;max-width:100%;min-height:487px;"></iframe>'
 })

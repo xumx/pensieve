@@ -18,14 +18,30 @@ if (Meteor.isClient) {
                 case 'visualise':
                     var entity = entities ? entities['what_to_visualise'][0].value : undefined;
                     console.log('entity = ' + entity);
-                    var result = _.find(graphiq, function(obj) {
-                        if (obj.title.search(new RegExp(label, 'i')) >= 0 && obj.title.search(new RegExp(entity, 'i')) >= 0) {
-                            return obj;
-                        }
-                    });
-                    console.log(result);
 
-                    //use result to display UI
+                    if (entity) {
+                        var result = _.find(graphiq, function(obj) {
+                            if (obj.title.search(new RegExp(label, 'i')) && obj.title.search(new RegExp(entity, 'i'))) {
+                                return obj;
+                            }
+                        });
+                    } else {
+                        var result = _.find(graphiq, function(obj) {
+                            if (obj.title.search(new RegExp(label, 'i'))) {
+                                return obj;
+                            }
+                        });
+                    }
+
+                    p.selected.data = {
+                        embed: result.embed
+                    }
+
+                    p.newNode(result.title, {
+                        embed: result.embed
+                    });
+
+                    Session.set("selected", Math.random());
 
                     break;
 
@@ -348,10 +364,10 @@ if (Meteor.isClient) {
             return p.selected;
         },
         offsetX: function(value) {
-            return value + 50;
+            return value + 30;
         },
         offsetY: function(value) {
-            return value - 50;
+            return value - 30;
         }
     });
 
@@ -422,7 +438,7 @@ if (Meteor.isClient) {
             if (p.selected) {
                 if (Bounds.contains(p.selected.bounds, mouse.position) && Vertices.contains(p.selected.vertices, mouse.position)) {
                     // recognition.start();
-                    p.expand("visualise acquisition", p.selected.label);
+                    p.expand("visualise", p.selected.label);
                 }
             }
         });
@@ -481,7 +497,7 @@ if (Meteor.isClient) {
         var canvas = document.querySelector("canvas");
 
         canvas.ondragenter = function handleDragDropEvent(oEvent) {
-            
+
             switch (oEvent.type) {
                 case "dragover":
                 case "dragenter":
@@ -494,7 +510,7 @@ if (Meteor.isClient) {
             }
         }
         canvas.ondragover = function handleDragDropEvent(oEvent) {
-            
+
             switch (oEvent.type) {
                 case "dragover":
                 case "dragenter":
@@ -507,7 +523,7 @@ if (Meteor.isClient) {
             }
         }
         canvas.ondragstop = function handleDragDropEvent(oEvent) {
-            
+
             switch (oEvent.type) {
                 case "dragover":
                 case "dragenter":
