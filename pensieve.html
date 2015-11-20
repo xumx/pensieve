@@ -6,19 +6,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="robots" content="noindex">
-    <script type="text/javascript">
-        function handleDragDropEvent(oEvent) {
-
-            switch(oEvent.type) {
-                case "dragover":
-                case "dragenter":
-                    oEvent.returnValue = false;
-                    break;
-                case "drop":
-                    oEvent.dataTransfer.getData("URL");
-            }
-        }
-    </script>
 </head>
 
 <body>
@@ -27,7 +14,7 @@
 
 <template name="wit"></template>
 <template name="canvas">
-    <div id="canvas" ondragenter="handleDragDropEvent(event)" ondragover="handleDragDropEvent(event)" ondrop="handleDragDropEvent(event)" style="position:absolute; z-index: 0; "></div>
+    <div id="canvas" style="position:absolute; z-index: 0; "></div>
 
     {{#if selected.data.embed}}
     <div class="card transition" style="position: absolute; top: {{offsetY selected.position.y}}px; left: {{offsetX selected.position.x}}px;">

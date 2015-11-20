@@ -6,8 +6,8 @@ if (Meteor.isClient) {
     p.nodes = [];
     p.selected = null;
 
-    p.expand = function (transcript, label) {
-        Meteor.call('getIntent', transcript, function (err, res) {
+    p.expand = function(transcript, label) {
+        Meteor.call('getIntent', transcript, function(err, res) {
             console.log(res);
             var intent = res.outcomes[0].intent;
             var entities = res.outcomes[0].entities;
@@ -18,25 +18,47 @@ if (Meteor.isClient) {
                 case 'visualise':
                     var entity = entities ? entities['what_to_visualise'][0].value : undefined;
                     console.log('entity = ' + entity);
-                    var result = _.find(graphiq, function (obj) {
-                        if (obj.title.search(new RegExp(label, 'i')) >= 0 && obj.title.search(new RegExp(entity, 'i')) >= 0) {
-                            return obj;
-                        }
-                    })
-                    console.log(result);
 
-                    //use result to display UI
+                    if (entity) {
+                        var result = _.find(graphiq, function(obj) {
+                            if (obj.title.search(new RegExp(label, 'i')) && obj.title.search(new RegExp(entity, 'i'))) {
+                                return obj;
+                            }
+                        });
+                    } else {
+                        var result = _.find(graphiq, function(obj) {
+                            if (obj.title.search(new RegExp(label, 'i'))) {
+                                return obj;
+                            }
+                        });
+                    }
+
+                    p.selected.data = {
+                        embed: result.embed
+                    }
+
+                    p.newNode(result.title, {
+                        embed: result.embed
+                    });
+
+                    Session.set("selected", Math.random());
 
                     break;
 
 
                 case 'news':
-                    prismatic.news(label, function (err, res) {
-                        console.log(res);   //JSON
-                    })
+                    // prismatic.news(label, function(err, res) {
+                    //     console.log(res.data.items); //JSON
 
-                    prismatic.newsUrl(label, function (err, res) {
-                        console.log(res);   //URL
+                    //     // p.newNode(res)
+                    // })
+
+                    prismatic.newsUrl(label, function(err, res) {
+                        p.selected.data = {
+                            embed: "<iframe seamless scrolling='no' style='overflow-x:hidden; margin-top:-70px;width:100%; height:100%;' src='" + res + "'></iframe>"
+                        }
+
+                        Session.set("selected", Math.random());
                     })
                     break;
 
@@ -51,7 +73,7 @@ if (Meteor.isClient) {
 
             if (event.results.length > 0) {
                 var transcript = event.results[0][0].transcript;
-                p.expand(transcript, p.selected.label);   //returns JSON containing type of intent executed and data
+                p.expand(transcript, p.selected.label); //returns JSON containing type of intent executed and data
             }
         }
 
@@ -166,10 +188,29 @@ if (Meteor.isClient) {
         Session.set("selected", Math.random())
     }
 
-    p.delete = function() {
-        if (p.selected) {
-            World.remove(_engine.world, p.selected, true);
-        }
+    p.delete = function() {}
+
+    p.watson = function(url) {
+        Meteor.call('getEntities', url, function(err, res) {
+            console.log(res)
+            _.each(res, function(label, key, list) {
+                p.newNode(label);
+            });
+        });
+    }
+    p.watsonR = function(url){
+        p.watson(url);
+        Meteor.call('getRelations' , url , function(err,res){
+            console.log(res)
+            for(var i=0;i<res.length;i++){
+                console.log(_.findWhere(_engine.world.bodies,{label:res[i].key}));
+                var a = _.findWhere(_engine.world.bodies,{label:res[i].key});
+                p.select(a);
+                for(var j=0;j<res[i].relations.length;j++){
+                    p.newNode(res[i].relations[j]);
+                }
+            }
+        });
     }
 
     p.fix = function(body, data) {
@@ -301,7 +342,7 @@ if (Meteor.isClient) {
         var edge = Constraint.create({
             bodyA: core,
             bodyB: node,
-            length: 150,
+            length: 180,
             label: "edge",
             stiffness: 0.005,
             render: {
@@ -332,10 +373,10 @@ if (Meteor.isClient) {
             return p.selected;
         },
         offsetX: function(value) {
-            return value + 50;
+            return value + 30;
         },
         offsetY: function(value) {
-            return value - 50;
+            return value - 30;
         }
     });
 
@@ -370,24 +411,6 @@ if (Meteor.isClient) {
 
         // add a mouse controlled constraint
         _mouseConstraint = MouseConstraint.create(_engine);
-        // _mouseConstraint.constraint.render.lineWidth = 0;
-
-
-        //Walls
-        // World.add(_engine.world, [
-        //     Bodies.rectangle(3, 3, 2, window.innerHeight * 2, {
-        //         isStatic: true
-        //     }),
-        //     Bodies.rectangle(3, 3, window.innerWidth * 2, 2, {
-        //         isStatic: true
-        //     }),
-        //     Bodies.rectangle(10, window.innerHeight - 5, window.innerWidth * 2, 2, {
-        //         isStatic: true
-        //     }),
-        //     Bodies.rectangle(window.innerWidth - 5, 10, 2, window.innerHeight * 2, {
-        //         isStatic: true
-        //     })
-        // ]);
 
         World.add(_engine.world, [_mouseConstraint, recordButton, deleteButton]);
         _engine.world.gravity.y = 0;
@@ -423,7 +446,8 @@ if (Meteor.isClient) {
 
             if (p.selected) {
                 if (Bounds.contains(p.selected.bounds, mouse.position) && Vertices.contains(p.selected.vertices, mouse.position)) {
-                    recognition.start();
+                    // recognition.start();
+                    p.expand("visualise", p.selected.label);
                 }
             }
         });
@@ -441,8 +465,7 @@ if (Meteor.isClient) {
 
             if (Bounds.contains(recordButton.bounds, mouse.position) && Vertices.contains(recordButton.vertices, mouse.position)) {
 
-                p.newNode("Something");
-
+                p.newNode("Facebook");
                 return
             }
 
@@ -478,6 +501,49 @@ if (Meteor.isClient) {
         // run the engine
         Engine.run(_engine);
         Demo.initControls();
+
+
+        var canvas = document.querySelector("canvas");
+
+        canvas.ondragenter = function handleDragDropEvent(oEvent) {
+
+            switch (oEvent.type) {
+                case "dragover":
+                case "dragenter":
+                    oEvent.returnValue = false;
+                    break;
+                case "drop":
+                    var url = oEvent.dataTransfer.getData("Text");
+                    p.watson(url);
+                    alert(url);
+            }
+        }
+        canvas.ondragover = function handleDragDropEvent(oEvent) {
+
+            switch (oEvent.type) {
+                case "dragover":
+                case "dragenter":
+                    oEvent.returnValue = false;
+                    break;
+                case "drop":
+                    var url = oEvent.dataTransfer.getData("Text");
+                    p.watson(url);
+                    alert(url);
+            }
+        }
+        canvas.ondragstop = function handleDragDropEvent(oEvent) {
+
+            switch (oEvent.type) {
+                case "dragover":
+                case "dragenter":
+                    oEvent.returnValue = false;
+                    break;
+                case "drop":
+                    var url = oEvent.dataTransfer.getData("Text");
+                    p.watson(url);
+                    alert(url);
+            }
+        }
     };
 }
 
