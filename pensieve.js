@@ -61,8 +61,8 @@ if (Meteor.isClient) {
                 fillStyle: "transparent",
                 lineWidth: 0,
                 sprite: {
-                    xScale: 0.8,
-                    yScale: 0.8,
+                    xScale: 0.9,
+                    yScale: 0.9,
                     texture: "/cubecore.gif"
                 }
             }
@@ -400,7 +400,7 @@ if (Meteor.isClient) {
         $('#core').css({
             position: 'absolute',
             top: window.innerHeight / 2 - 160,
-            left: window.innerWidth / 2 - 153
+            left: window.innerWidth / 2 - 163
         });
 
         World.add(_engine.world, [_mouseConstraint, recordButton, deleteButton]);
