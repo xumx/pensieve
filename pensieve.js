@@ -425,9 +425,9 @@ if (Meteor.isClient) {
                     } else {
                         p.select(body)
                         return true;
-                    } else {
-                        return false;
                     }
+                } else {
+                    return false;
                 }
             });
 
