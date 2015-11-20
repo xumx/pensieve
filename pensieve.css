@@ -1,6 +1,8 @@
 @import url('http://fonts.googleapis.com/css?family=Raleway:400,200');
+@import url(https://fonts.googleapis.com/css?family=Lato);
 
 /* CSS declarations go here */
+<<<<<<< HEAD
 
 html,
 body {
@@ -9,6 +11,9 @@ body {
     overflow: hidden;
     background: #00C4C0;
 }
+=======
+html, body{ margin: 0; padding: 0; overflow: hidden; background: rgb(4,4,4); }
+>>>>>>> origin/clarence
 
 .ins-container {
     z-index: 1000;
