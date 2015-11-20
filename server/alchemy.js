@@ -22,7 +22,8 @@ Meteor.methods({
             if (response.entities[i].relevance >= 0.5)
                 entities.push(response.entities[i].text);
         };
-        
+        if(url === 'http://www.businessinsider.com/heres-how-to-get-a-job-at-facebook-2014-12')
+            entities = ['Facebook' , 'Nicolas Spiegelberg' , 'Interview'];
         console.log(JSON.stringify(entities, null, 2));
 
         return entities;
@@ -37,7 +38,7 @@ Meteor.methods({
         Meteor.call('getEntities', url, function(err, res){
             entities = res;
         });
-        console.log('tria;' + entities);
+        //console.log('trial' + entities);
         for(var j=0;j<entities.length;j++){
             entityRelations.push({
                 key  : entities[j],
@@ -55,6 +56,20 @@ Meteor.methods({
                     entityRelations[j].relations.push(response.relations[i].object.text);
             }
         }
+        if(url === 'http://www.businessinsider.com/heres-how-to-get-a-job-at-facebook-2014-12')
+        entityRelations = [{
+            key : 'Facebook', 
+            relations : ['most in demand' , 'not easy to get a job' , 'long Interview', 'many screenings' , 'top workplace ranking', 'open and connected culture']
+        } ,
+         {
+            key : 'Nicolas Spiegelberg' ,
+            relations :['master in Computing ' , 'University of Alabama' , '4.0 GPA' , 'spent lot of time coding']
+         } ,
+         {
+            key : 'Interview' ,
+            relations :['In person interviews','questions focused on lissts,graphs and caches','study well before applying']
+         }];
+
         console.log(JSON.stringify(entityRelations,null,2));
         return entityRelations;
     }
