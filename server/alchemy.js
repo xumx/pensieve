@@ -37,9 +37,10 @@ Meteor.methods({
         Meteor.call('getEntities', url, function(err, res){
             entities = res;
         });
+        console.log('tria;' + entities);
         for(var j=0;j<entities.length;j++){
             entityRelations.push({
-                key  : entities[i],
+                key  : entities[j],
                 relations : []
             })   
         }

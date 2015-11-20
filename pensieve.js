@@ -199,9 +199,18 @@ if (Meteor.isClient) {
         });
     }
     p.watsonR = function(url){
+        p.watson(url);
         Meteor.call('getRelations' , url , function(err,res){
             console.log(res)
-        })
+            for(var i=0;i<res.length;i++){
+                console.log(_.findWhere(_engine.world.bodies,{label:res[i].key}));
+                var a = _.findWhere(_engine.world.bodies,{label:res[i].key});
+                p.select(a);
+                for(var j=0;j<res[i].relations.length;j++){
+                    p.newNode(res[i].relations[j]);
+                }
+            }
+        });
     }
 
     p.fix = function(body, data) {
