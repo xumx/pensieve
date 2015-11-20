@@ -14,8 +14,8 @@
 
 <template name="wit"></template>
 <template name="canvas">
+    <!--<img id="core" src="/cubecore.gif" style="z-index: 1; position: absolute; pointer-events: none;">-->
   <div id="canvas" style="position:absolute; z-index: 0;"></div>
-
   {{#if selected.data.embed}}
   <div class="card transition" style="position: absolute; top: {{offsetY selected.position.y}}px; left: {{offsetX selected.position.x}}px;">
     <div class="embed" style="width:100%;height:100%;">{{{selected.data.embed}}}</div>

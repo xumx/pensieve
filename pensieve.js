@@ -61,12 +61,14 @@ if (Meteor.isClient) {
                 fillStyle: "transparent",
                 lineWidth: 0,
                 sprite: {
-                    xScale: 0.4,
-                    yScale: 0.4,
-                    texture: "/core.png"
+                    xScale: 0.8,
+                    yScale: 0.8,
+                    texture: "/cubecore.gif"
                 }
             }
         });
+
+
 
         recordButton.label = "core"
 
@@ -146,12 +148,12 @@ if (Meteor.isClient) {
 
     p.select = function(body) {
         if (p.selected) {
-            p.selected.render.lineWidth = 0
+            p.selected.render.sprite.texture = '/light_blue.png';
             p.selected.circleRadius = 20
         }
 
         p.selected = body
-        p.selected.render.lineWidth = 4
+        p.selected.render.sprite.texture = '/light_red.png';
         p.selected.circleRadius = 20
 
         Session.set("selected", Math.random())
@@ -291,7 +293,13 @@ if (Meteor.isClient) {
 
         var node = Bodies.circle(target.x, target.y, 20, {
             render: {
-                fillStyle: color
+                fillStyle: "transparent",
+                lineWidth: 0,
+                sprite: {
+                    xScale: 0.4,
+                    yScale: 0.4,
+                    texture: "/light_blue.png"
+                }
             }
         });
 
@@ -305,7 +313,7 @@ if (Meteor.isClient) {
             label: "edge",
             stiffness: 0.005,
             render: {
-                strokeStyle: color || "#FFF",
+                strokeStyle: "#ccc",
                 lineWidth: 1
             }
         });
@@ -355,7 +363,7 @@ if (Meteor.isClient) {
             enableSleeping: false,
             render: {
                 options: {
-                    background: "#00C4C0",
+                    background: "rgb(4,4,4)",
                     showIds: true,
                     wireframes: false
                 }
@@ -388,6 +396,12 @@ if (Meteor.isClient) {
         //         isStatic: true
         //     })
         // ]);
+
+        $('#core').css({
+            position: 'absolute',
+            top: window.innerHeight / 2 - 160,
+            left: window.innerWidth / 2 - 153
+        });
 
         World.add(_engine.world, [_mouseConstraint, recordButton, deleteButton]);
         _engine.world.gravity.y = 0;
