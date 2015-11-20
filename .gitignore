@@ -3,3 +3,7 @@
 *.sublime-workspace
 mup.json
 .idea/.name
+
+*.xml
+
+*.iml
