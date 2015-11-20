@@ -6,6 +6,26 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="robots" content="noindex">
+    <script>
+    function handleDragDropEvent(oEvent) {
+            console.log("log");
+            switch (oEvent.type) {
+                case "dragover":
+                    oEvent.preventDefault();
+                    oEvent.stopImmediatePropagation();
+                case "dragenter":
+                    oEvent.returnValue = false;
+                    oEvent.preventDefault();
+                    oEvent.stopImmediatePropagation();
+                    break;
+                case "drop":
+                    alert(oEvent.dataTransfer.getData("URL"));
+                    console.log(oEvent.dataTransfer.getData("URL"));
+                    oEvent.preventDefault();
+                    oEvent.stopImmediatePropagation();
+            }
+        }
+    </script>
 </head>
 
 <body>

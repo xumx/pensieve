@@ -148,7 +148,7 @@ if (Meteor.isClient) {
                     }
                 }
             }
-            
+
 
             for (var i = 0; i < n; ++i) {
                 var p = particles[i];
@@ -239,9 +239,11 @@ if (Meteor.isClient) {
 
     p.deselect = function() {
         if (p.selected) {
-            p.selected.render.lineWidth = 0
+            p.selected.render.sprite.texture = '/light_blue.png';
             p.selected.circleRadius = 20
         }
+
+        p.selected = null;
 
         Session.set("selected", Math.random())
     }
@@ -257,7 +259,6 @@ if (Meteor.isClient) {
         });
     }
     p.watsonR = function(url) {
-        //p.watson(url);
         Meteor.call('getRelations', url, function(err, res) {
             console.log(res)
             for (var i = 0; i < res.length; i++) {
@@ -272,6 +273,7 @@ if (Meteor.isClient) {
                     p.newNode(res[i].relations[j]);
                 }
             }
+            p.deselect();
         });
     }
 
@@ -577,47 +579,32 @@ if (Meteor.isClient) {
         Demo.initControls();
         // p.animate();
 
-        var canvas = document.querySelector("canvas");
+        var canvas = document.querySelector("body");
 
-        canvas.ondragenter = function handleDragDropEvent(oEvent) {
-
+        function handleDragDropEvent(oEvent) {
+            console.log("log");
             switch (oEvent.type) {
                 case "dragover":
+                    oEvent.preventDefault();
+                    oEvent.stopImmediatePropagation();
                 case "dragenter":
                     oEvent.returnValue = false;
+                    oEvent.preventDefault();
+                    oEvent.stopImmediatePropagation();
                     break;
                 case "drop":
-                    var url = oEvent.dataTransfer.getData("Text");
-                    p.watson(url);
-                    alert(url);
+                    var url = oEvent.dataTransfer.getData("URL");
+                    var text = oEvent.dataTransfer.getData("Text");
+                    console.log(url || text);
+                    p.watson(url || text);
+                    p.watsonR(url || text);
+                    oEvent.preventDefault();
+                    oEvent.stopImmediatePropagation();
             }
         }
-        canvas.ondragover = function handleDragDropEvent(oEvent) {
-
-            switch (oEvent.type) {
-                case "dragover":
-                case "dragenter":
-                    oEvent.returnValue = false;
-                    break;
-                case "drop":
-                    var url = oEvent.dataTransfer.getData("Text");
-                    p.watson(url);
-                    alert(url);
-            }
-        }
-        canvas.ondragstop = function handleDragDropEvent(oEvent) {
-
-            switch (oEvent.type) {
-                case "dragover":
-                case "dragenter":
-                    oEvent.returnValue = false;
-                    break;
-                case "drop":
-                    var url = oEvent.dataTransfer.getData("Text");
-                    p.watson(url);
-                    alert(url);
-            }
-        }
+        canvas.ondragenter = handleDragDropEvent;
+        canvas.ondragover = handleDragDropEvent;
+        canvas.ondrop = handleDragDropEvent;
     };
 }
 
