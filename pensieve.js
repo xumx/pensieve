@@ -18,15 +18,19 @@ if (Meteor.isClient) {
 
         recordButton = Bodies.circle(window.innerWidth / 2, window.innerHeight / 2, 20, {
             isStatic: true,
-            label: "record",
             render: {
                 fillStyle: "transparent",
-                strokeStyle: "white",
-                lineWidth: 5
+                lineWidth: 0,
+                sprite: {
+                    xScale: 0.4,
+                    yScale: 0.4,
+                    texture: "/core.png"
+                }
             }
         });
 
-        recordButton.label = "record";
+        recordButton.label = "core"
+
 
         deleteButton = Bodies.circle(window.innerWidth - 50, window.innerHeight - 50, 35, {
             render: {
@@ -199,16 +203,42 @@ if (Meteor.isClient) {
 
     p.newNode = function(text, data) {
         var color = p.selected ? p.selected.render.fillStyle : null;
-        var target = p.selected ? p.selected.position : {
-            x: window.innerWidth / 2,
-            y: window.innerHeight / 2 + 180
-        }
+        var target = {}
+
+        var core = p.selected || _.findWhere(_engine.world.bodies, {
+            label: 'core'
+        });
 
         if (p.selected && p.parentEdge(p.selected)) {
             var parentEdge = p.parentEdge(p.selected)
             var shoot = Vector.normalise(Vector.sub(parentEdge.bodyA.position, parentEdge.bodyB.position))
-            target.x += shoot.x * 5
-            target.y += shoot.y * 5
+            target.x = p.selected.position.x - shoot.x * 5
+            target.y = p.selected.position.y - shoot.y * 5
+        } else {
+            target.x = window.innerWidth / 2;
+            target.y = window.innerHeight / 2;
+
+            var level1 = _.filter(_engine.world.constraints, function(edge, key, list){
+                return edge.bodyA && edge.bodyA == core;
+            });
+
+            var v = {x: 0, y: -100}
+            
+            if (level1.length == 0) {
+                v = Vector.rotate(v, 0)
+            } else if (level1.length == 1) {
+                v = Vector.rotate(v, Math.PI/3)
+            } else if (level1.length == 2) {
+                v = Vector.rotate(v, Math.PI/3 * 2)
+            } else if (level1.length == 3) {
+                v = Vector.rotate(v, Math.PI)
+            } else if (level1.length == 4) {
+                v = Vector.rotate(v, -Math.PI/3 * 2)
+            } else if (level1.length == 5) {
+                v = Vector.rotate(v, -Math.PI/3)
+            }
+
+            target = Vector.add(target, v);
         }
 
         var node = Bodies.circle(target.x, target.y, 20, {
@@ -220,13 +250,8 @@ if (Meteor.isClient) {
         node.label = text || "Brilliant idea";
         node.data = data;
 
-        var bodyA = p.selected || _.findWhere(_engine.world.bodies, {
-            label: 'record'
-        });
-
-
         var edge = Constraint.create({
-            bodyA: bodyA,
+            bodyA: core,
             bodyB: node,
             length: 150,
             label: "edge",
@@ -276,7 +301,7 @@ if (Meteor.isClient) {
             enableSleeping: false,
             render: {
                 options: {
-                    background: "#55df98",
+                    background: "#00C4C0",
                     showIds: true,
                     wireframes: false
                 }
@@ -344,7 +369,7 @@ if (Meteor.isClient) {
 
             if (p.selected) {
                 if (Bounds.contains(p.selected.bounds, mouse.position) && Vertices.contains(p.selected.vertices, mouse.position)) {
-                    recognition.start();
+                    //recognition.start();
                 }
             }
         });
@@ -362,10 +387,10 @@ if (Meteor.isClient) {
 
             if (Bounds.contains(recordButton.bounds, mouse.position) && Vertices.contains(recordButton.vertices, mouse.position)) {
 
-
                 p.newNode("Something", {
                     title: "Elon Musk",
-                    description: "Works at SpaceX & Tesla Lived in Los Angeles"
+                    description: "Works at SpaceX & Tesla Lived in Los Angeles",
+                    embed: "<iframe style='width:100%' src='http://prismatic.github.io/explorer/?topics=2142&aspect=type.article.content.other&page=1'></iframe>"
                 });
 
                 return

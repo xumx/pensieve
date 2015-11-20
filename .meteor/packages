@@ -21,5 +21,7 @@ insecure                # Allow all DB writes from clients (for prototyping)
 meteorhacks:npm
 
 
-npm-container
 http
+
+
+npm-container

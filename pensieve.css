@@ -1,7 +1,7 @@
 @import url('http://fonts.googleapis.com/css?family=Raleway:400,200');
 
 /* CSS declarations go here */
-html, body{ margin: 0; padding: 0; overflow: hidden; background: #55df98; }
+html, body{ margin: 0; padding: 0; overflow: hidden; background: #00C4C0; }
 
 .ins-container {
 	z-index: 1000;
@@ -20,8 +20,14 @@ html, body{ margin: 0; padding: 0; overflow: hidden; background: #55df98; }
     width: 300px;
 }
 .card:hover {
-    height: 522px;
-    width: 700px;
+    height: 700px;
+    width: 400px;
+}
+.card .embed {
+    visibility: hidden;
+}
+.card:hover .embed {
+    visibility: visible;
 }
 .card:hover .cta-container {
     display: inline;

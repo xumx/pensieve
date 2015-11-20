@@ -9,17 +9,14 @@
 </head>
 
 <body>
-<!--   <h1>The Pensieve</h1>
-  <h4>Intelligence Amplification Mind Map</h4>
- -->
+
   {{> canvas}}
 </body>
 
 <template name="canvas">
   <div id="canvas" style="position:absolute; z-index: 0;"></div>
-  
- 
   <div class="card transition" style="position: absolute; top: 0px; left: 0px;">
+    <div class="embed" style="width:100%;">{{selected.data.embed}}</div>
     <h2 class="transition">{{selected.data.title}}</h2>
     <p>{{selected.data.description}}</p>
     <div class="cta-container transition"><a href="#" class="cta">Action</a></div>
