@@ -7,20 +7,22 @@ if (Meteor.isClient) {
     p.selected = null;
 
     p.init = function() {
-        var recognition = new webkitSpeechRecognition();
+        recognition = new webkitSpeechRecognition();
         recognition.onresult = function(event) {
+            console.log(event);
+
             if (event.results.length > 0) {
-                p.newNode(event.results[0][0].transcript);
+                alert(event.results[0][0].transcript);
             }
         }
 
-        recordButton = Bodies.circle(window.innerWidth / 2, window.innerHeight / 2 + 180, 32, {
+        recordButton = Bodies.circle(window.innerWidth / 2, window.innerHeight / 2, 20, {
             isStatic: true,
             label: "record",
             render: {
                 fillStyle: "transparent",
                 strokeStyle: "white",
-                lineWidth: 3
+                lineWidth: 5
             }
         });
 
@@ -36,9 +38,21 @@ if (Meteor.isClient) {
             label: "delete"
         });
 
+        // button1 = Bodies.
+
     }
 
-    p.toggleChildren = function (node) {
+    p.toggleMenu = function(node) {
+        if (node.actionsShown) {
+            p.hideActions(node)
+        } else {
+            p.showActions(node)
+        }
+
+        node.actionsShown = !node.actionsShown
+    }
+
+    p.toggleChildren = function(node) {
         if (node.folded) {
             p.children(node, true)
         } else {
@@ -48,27 +62,44 @@ if (Meteor.isClient) {
         node.folded = !node.folded
     }
 
-    p.children = function(node, visible) {
+    p.hideActions = function(node) {
         var edges = _.filter(_engine.world.constraints, function(edge) {
-            return edge.bodyA && edge.bodyA.id == node.id
+            return edge.label == "action" && edge.bodyA && edge.bodyA.id == node.id
         });
 
-        var childNodes = _.map(edges, function(edge){
+        var childNodes = _.map(edges, function(edge) {
+            return edge.bodyB
+        });
+
+        _.each(childNodes, function(node) {
+            World.remove(_engine.world, node)
+        });
+
+        _.each(edges, function(edge) {
+            World.remove(_engine.world, edge)
+        });
+
+    }
+
+    p.children = function(node, visible) {
+        var edges = _.filter(_engine.world.constraints, function(edge) {
+            return edge.label != "action" && edge.bodyA && edge.bodyA.id == node.id
+        });
+
+        var childNodes = _.map(edges, function(edge) {
             return edge.bodyB
         });
 
         //Recursion
-        _.each(childNodes, function(childNode){
-
+        _.each(childNodes, function(childNode) {
             p.children(childNode, visible)
-
         });
 
-        _.each(childNodes, function (childNode) {
+        _.each(childNodes, function(childNode) {
             childNode.render.visible = visible
         });
 
-        _.each(edges, function (edge) {
+        _.each(edges, function(edge) {
             edge.render.visible = visible
         });
     }
@@ -76,12 +107,14 @@ if (Meteor.isClient) {
     p.select = function(body) {
         if (p.selected) {
             p.selected.render.lineWidth = 1
-            p.selected.circleRadius = 30
+            p.selected.circleRadius = 15
         }
 
         p.selected = body
         p.selected.render.lineWidth = 4
-        p.selected.circleRadius = 35
+        p.selected.circleRadius = 20
+
+        Session.set("selected", "")
     }
 
     p.delete = function() {
@@ -90,24 +123,102 @@ if (Meteor.isClient) {
         }
     }
 
-    p.fix = function(body) {
+    p.fix = function(body, data) {
         body.isStatic = !body.isStatic
     }
 
-    p.newNode = function(text) {
+    p.showActions = function(node) {
+        // node
+        var action1 = Bodies.polygon(node.position.x + 15, node.position.y - 10, 6, 15, {
+            label: 'Find Similar',
+            render: {
+                fillStyle: '#BD2346'
+            }
+        });
+
+        var action2 = Bodies.polygon(node.position.x + 25, node.position.y, 6, 15, {
+            label: 'Related News',
+            render: {
+                fillStyle: '#BD2346'
+            }
+        });
+
+        var action3 = Bodies.polygon(node.position.x + 15, node.position.y + 10, 6, 15, {
+            label: 'Show Statistics',
+            render: {
+                fillStyle: '#BD2346'
+            }
+        });
+
+        var edge1 = Constraint.create({
+            bodyA: node,
+            bodyB: action1,
+            length: 50,
+            label: "action",
+            stiffness: 1,
+            angularStiffness: 1,
+            render: {
+                visible: false
+            }
+        });
+
+        var edge2 = Constraint.create({
+            bodyA: node,
+            bodyB: action2,
+            length: 50,
+            label: "action",
+            stiffness: 1,
+            angularStiffness: 1,
+            render: {
+                visible: false
+            }
+        });
+
+        var edge3 = Constraint.create({
+            bodyA: node,
+            bodyB: action3,
+            length: 50,
+            label: "action",
+            stiffness: 1,
+            angularStiffness: 1,
+            render: {
+                visible: false
+            }
+        });
+
+        World.add(_engine.world, [action1, action2, action3])
+        World.add(_engine.world, [edge1, edge2, edge3])
+    }
+
+    p.parentEdge = function(body) {
+        return _.findWhere(_engine.world.constraints, {
+            bodyB: body,
+            label: 'edge'
+        });
+    }
+
+    p.newNode = function(text, data) {
         var color = p.selected ? p.selected.render.fillStyle : null;
-        var origin = p.selected ? p.selected.position : {
+        var target = p.selected ? p.selected.position : {
             x: window.innerWidth / 2,
             y: window.innerHeight / 2 + 180
         }
 
-        var node = Bodies.circle(origin.x, origin.y - 1, 30, {
+        if (p.selected && p.parentEdge(p.selected)) {
+            var parentEdge = p.parentEdge(p.selected)
+            var shoot = Vector.normalise(Vector.sub(parentEdge.bodyA.position, parentEdge.bodyB.position))
+            target.x += shoot.x * 5
+            target.y += shoot.y * 5
+        }
+
+        var node = Bodies.circle(target.x, target.y, 20, {
             render: {
                 fillStyle: color
             }
         });
 
         node.label = text || "Brilliant idea";
+        node.data = data;
 
         var bodyA = p.selected || _.findWhere(_engine.world.bodies, {
             label: 'record'
@@ -117,7 +228,8 @@ if (Meteor.isClient) {
         var edge = Constraint.create({
             bodyA: bodyA,
             bodyB: node,
-            length: 100,
+            length: 150,
+            label: "edge",
             stiffness: 0.005,
             render: {
                 strokeStyle: color || "#FFF",
@@ -140,6 +252,13 @@ if (Meteor.isClient) {
     }
 
     p.init();
+
+    Template.canvas.helpers({
+        selected: function() {
+            Session.get("selected")
+            return p.selected;
+        }
+    });
 
     Template.canvas.rendered = function() {
         var container = document.getElementById('canvas');
@@ -167,7 +286,6 @@ if (Meteor.isClient) {
         // create a Matter engine
         // NOTE: this is actually Matter.Engine.create(), see the aliases at top of this file
         _engine = Engine.create(container, options);
-        _engine.world.gravity.y = -0.5;
         resize(window.innerWidth, window.innerHeight);
 
 
@@ -193,19 +311,63 @@ if (Meteor.isClient) {
         // ]);
 
         World.add(_engine.world, [_mouseConstraint, recordButton, deleteButton]);
+        _engine.world.gravity.y = 0;
+
+        Events.on(_engine, 'mousemove', function(event) {
+            if (_mouseConstraint.constraint.bodyB) {
+                var body = _mouseConstraint.constraint.bodyB;
+                var con = _.findWhere(_engine.world.constraints, {
+                    'bodyB': body,
+                    'label': 'edge'
+                });
+
+                if (con.bodyA && con.bodyB) {
+                    con.length = Vector.magnitude(Vector.sub(con.bodyA.position, con.bodyB.position));
+                }
+            }
+        });
+
+        Events.on(_engine, 'mousedown', function(event) {
+            var mouse = event.mouse;
+
+            if (_mouseConstraint.constraint.bodyB) {
+                var body = _mouseConstraint.constraint.bodyB;
+                var con = _.findWhere(_engine.world.constraints, {
+                    'bodyB': body,
+                    'label': 'edge'
+                });
+
+                if (con && con.bodyA && con.bodyB) {
+                    con.length = Vector.magnitude(Vector.sub(con.bodyA.position, con.bodyB.position));
+                }
+            }
+
+            if (p.selected) {
+                if (Bounds.contains(p.selected.bounds, mouse.position) && Vertices.contains(p.selected.vertices, mouse.position)) {
+                    recognition.start();
+                }
+            }
+        });
+
 
         Events.on(_engine, 'mouseup', function(event) {
             var mouse = event.mouse;
 
-            // var body = _.findWhere(_engine.world.bodies, {
-            //     id: recordButton.id
-            // });
+            if (p.selected) {
+                if (Bounds.contains(p.selected.bounds, mouse.position) && Vertices.contains(p.selected.vertices, mouse.position)) {
+                    // recognition.stop();
+                    return
+                }
+            }
 
             if (Bounds.contains(recordButton.bounds, mouse.position) && Vertices.contains(recordButton.vertices, mouse.position)) {
-                console.log("clicked record button")
 
-                p.newNode("Something");
-                // recognition.start();
+
+                p.newNode("Something", {
+                    title: "Elon Musk",
+                    description: "Works at SpaceX & Tesla Lived in Los Angeles"
+                });
+
                 return
             }
 
@@ -223,7 +385,7 @@ if (Meteor.isClient) {
                     if (p.selected == body) {
                         p.toggleChildren(body)
                     } else {
-                        p.select(body)    
+                        p.select(body)
                     }
                 }
             });
