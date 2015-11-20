@@ -106,6 +106,62 @@ if (Meteor.isClient) {
         });
     }
 
+    p.animate = function() {
+        var canvas = document.querySelector("canvas"),
+            context = canvas.getContext("2d"),
+            width = canvas.width,
+            height = canvas.height,
+            radius = 2,
+            minDistance = 60,
+            maxDistance = 120,
+            minDistance2 = minDistance * minDistance,
+            maxDistance2 = maxDistance * maxDistance;
+
+        var tau = 2 * Math.PI,
+            n = 100,
+            particles = new Array(n);
+
+        for (var i = 0; i < n; ++i) {
+            particles[i] = {
+                x: width * Math.random(),
+                y0: height * Math.random(),
+                v: .08 * (Math.random() - .5)
+            };
+        }
+
+        timer.timer(function(elapsed) {
+            // context.clearRect(0, 0, width, height);
+
+            for (var i = 0; i < n; ++i) {
+                for (var j = i + 1; j < n; ++j) {
+                    var pi = particles[i],
+                        pj = particles[j],
+                        dx = pi.x - pj.x,
+                        dy = pi.y - pj.y,
+                        d2 = dx * dx + dy * dy;
+                    if (d2 < maxDistance2) {
+                        context.globalAlpha = d2 > minDistance2 ? (maxDistance2 - d2) / (maxDistance2 - minDistance2) : 1 - 0.5;
+                        context.beginPath();
+                        context.moveTo(pi.x, pi.y);
+                        context.lineTo(pj.x, pj.y);
+                        context.stroke();
+                    }
+                }
+            }
+            
+
+            for (var i = 0; i < n; ++i) {
+                var p = particles[i];
+                p.y = p.y0 + elapsed * p.v;
+                if (p.y > height + maxDistance) p.x = width * Math.random(), p.y0 -= height + 2 * maxDistance;
+                else if (p.y < -maxDistance) p.x = width * Math.random(), p.y0 += height + 2 * maxDistance;
+                context.beginPath();
+                context.arc(p.x, p.y, radius, 0, tau);
+                context.fill();
+            }
+        });
+    }
+
     p.toggleMenu = function(node) {
         if (node.actionsShown) {
             p.hideActions(node)
@@ -200,15 +256,19 @@ if (Meteor.isClient) {
             });
         });
     }
-    p.watsonR = function(url){
+    p.watsonR = function(url) {
         //p.watson(url);
-        Meteor.call('getRelations' , url , function(err,res){
+        Meteor.call('getRelations', url, function(err, res) {
             console.log(res)
-            for(var i=0;i<res.length;i++){
-                console.log(_.findWhere(_engine.world.bodies,{label:res[i].key}));
-                var a = _.findWhere(_engine.world.bodies,{label:res[i].key});
+            for (var i = 0; i < res.length; i++) {
+                console.log(_.findWhere(_engine.world.bodies, {
+                    label: res[i].key
+                }));
+                var a = _.findWhere(_engine.world.bodies, {
+                    label: res[i].key
+                });
                 p.select(a);
-                for(var j=0;j<res[i].relations.length;j++){
+                for (var j = 0; j < res[i].relations.length; j++) {
                     p.newNode(res[i].relations[j]);
                 }
             }
@@ -515,7 +575,7 @@ if (Meteor.isClient) {
         // run the engine
         Engine.run(_engine);
         Demo.initControls();
-
+        // p.animate();
 
         var canvas = document.querySelector("canvas");
 
