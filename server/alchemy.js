@@ -51,7 +51,7 @@ Meteor.methods({
                 var finalStringA = punctuationless.replace(/\s{2,}/g," ");
                 var punctuationless2 = entities[j].replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
                 var finalStringB = punctuationless2.replace(/\s{2,}/g," ");                
-                if(finalStringB===finalStringA)
+                if(finalStringB===finalStringA && response.relations[i].object.text.length<40)
                     entityRelations[j].relations.push(response.relations[i].object.text);
             }
         }

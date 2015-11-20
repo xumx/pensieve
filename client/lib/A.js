@@ -5685,8 +5685,8 @@ var Render = {};
                 continue;
             }
             
-            c.font = "20px Arial";
-            c.fillStyle = 'rgba(10,10,10,0.9)';
+            c.font = "20px Lato";
+            c.fillStyle = '#eeeeee';
             c.fillText(body.label, body.position.x - body.label.length * 4, body.position.y - 20);
         }
     };
