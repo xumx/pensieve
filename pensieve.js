@@ -41,9 +41,6 @@ if (Meteor.isClient) {
             isStatic: true,
             label: "delete"
         });
-
-        // button1 = Bodies.
-
     }
 
     p.toggleMenu = function(node) {
@@ -110,15 +107,24 @@ if (Meteor.isClient) {
 
     p.select = function(body) {
         if (p.selected) {
-            p.selected.render.lineWidth = 1
-            p.selected.circleRadius = 15
+            p.selected.render.lineWidth = 0
+            p.selected.circleRadius = 20
         }
 
         p.selected = body
         p.selected.render.lineWidth = 4
         p.selected.circleRadius = 20
 
-        Session.set("selected", "")
+        Session.set("selected", Math.random())
+    }
+
+    p.deselect = function() {
+        if (p.selected) {
+            p.selected.render.lineWidth = 0
+            p.selected.circleRadius = 20
+        }
+
+        Session.set("selected", Math.random())
     }
 
     p.delete = function() {
@@ -218,24 +224,27 @@ if (Meteor.isClient) {
             target.x = window.innerWidth / 2;
             target.y = window.innerHeight / 2;
 
-            var level1 = _.filter(_engine.world.constraints, function(edge, key, list){
+            var level1 = _.filter(_engine.world.constraints, function(edge, key, list) {
                 return edge.bodyA && edge.bodyA == core;
             });
 
-            var v = {x: 0, y: -100}
-            
+            var v = {
+                x: 0,
+                y: -100
+            }
+
             if (level1.length == 0) {
                 v = Vector.rotate(v, 0)
             } else if (level1.length == 1) {
-                v = Vector.rotate(v, Math.PI/3)
+                v = Vector.rotate(v, Math.PI / 3)
             } else if (level1.length == 2) {
-                v = Vector.rotate(v, Math.PI/3 * 2)
+                v = Vector.rotate(v, Math.PI / 3 * 2)
             } else if (level1.length == 3) {
                 v = Vector.rotate(v, Math.PI)
             } else if (level1.length == 4) {
-                v = Vector.rotate(v, -Math.PI/3 * 2)
+                v = Vector.rotate(v, -Math.PI / 3 * 2)
             } else if (level1.length == 5) {
-                v = Vector.rotate(v, -Math.PI/3)
+                v = Vector.rotate(v, -Math.PI / 3)
             }
 
             target = Vector.add(target, v);
@@ -282,6 +291,12 @@ if (Meteor.isClient) {
         selected: function() {
             Session.get("selected")
             return p.selected;
+        },
+        offsetX: function(value) {
+            return value + 50;
+        },
+        offsetY: function(value) {
+            return value - 50;
         }
     });
 
@@ -387,11 +402,7 @@ if (Meteor.isClient) {
 
             if (Bounds.contains(recordButton.bounds, mouse.position) && Vertices.contains(recordButton.vertices, mouse.position)) {
 
-                p.newNode("Something", {
-                    title: "Elon Musk",
-                    description: "Works at SpaceX & Tesla Lived in Los Angeles",
-                    embed: "<iframe style='width:100%' src='http://prismatic.github.io/explorer/?topics=2142&aspect=type.article.content.other&page=1'></iframe>"
-                });
+                p.newNode("Something");
 
                 return
             }
@@ -402,18 +413,27 @@ if (Meteor.isClient) {
                 return
             }
 
-            _.each(_engine.world.bodies, function(body) {
+
+            var touched = _.some(_engine.world.bodies, function(body) {
                 if (body.id == recordButton.id) return;
 
                 if (Bounds.contains(body.bounds, mouse.position) && Vertices.contains(body.vertices, mouse.position)) {
 
                     if (p.selected == body) {
                         p.toggleChildren(body)
+                        return true;
                     } else {
                         p.select(body)
+                        return true;
+                    } else {
+                        return false;
                     }
                 }
             });
+
+            if (!touched) {
+                p.deselect();
+            }
         });
 
         // run the engine
