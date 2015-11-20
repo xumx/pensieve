@@ -2496,7 +2496,7 @@ var MouseConstraint = {};
             angularStiffness: 1,
             render: {
                 strokeStyle: '#90EE90',
-                lineWidth: 3
+                lineWidth: 1
             }
         });
 
@@ -5681,9 +5681,9 @@ var Render = {};
             if (!body.render.visible)
                 continue;
 
-            c.font = "12px Arial";
-            c.fillStyle = 'rgba(255,255,255,0.5)';
-            c.fillText(body.id, body.position.x + 10, body.position.y - 10);
+            c.font = "20px Arial";
+            c.fillStyle = 'rgba(10,10,10,0.9)';
+            c.fillText(body.label, body.position.x - body.label.length * 4, body.position.y - 15);
         }
     };
 
