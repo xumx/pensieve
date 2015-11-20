@@ -1,3 +1,4 @@
 {
-  "node-wit": "2.0.0"
+  "node-wit": "2.0.0",
+  "watson-developer-cloud" : "1.0.3"
 }

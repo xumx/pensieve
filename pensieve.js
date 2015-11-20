@@ -168,8 +168,11 @@ if (Meteor.isClient) {
 
     p.delete = function() {
         if (p.selected) {
-            World.remove(_engine.world, p.selected, true);
-        }
+            console.log("call done")
+            Meteor.call('getEntities', function(err, res) {
+                console.log(JSON.stringify(res,null,2));
+            });          
+       }
     }
 
     p.fix = function(body, data) {
