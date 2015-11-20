@@ -6,13 +6,52 @@ if (Meteor.isClient) {
     p.nodes = [];
     p.selected = null;
 
+    p.expand = function (transcript, label) {
+        Meteor.call('getIntent', transcript, function (err, res) {
+            console.log(res);
+            var intent = res.outcomes[0].intent;
+            var entities = res.outcomes[0].entities;
+            console.log('Executing %s with [%s]', intent, label);
+
+            switch (intent) {
+
+                case 'visualise':
+                    var entity = entities ? entities['what_to_visualise'][0].value : undefined;
+                    console.log('entity = ' + entity);
+                    var result = _.find(graphiq, function (obj) {
+                        if (obj.title.search(new RegExp(label, 'i')) >= 0 && obj.title.search(new RegExp(entity, 'i')) >= 0) {
+                            return obj;
+                        }
+                    })
+                    console.log(result);
+
+                    //use result to display UI
+
+                    break;
+
+
+                case 'news':
+                    prismatic.news(label, function (err, res) {
+                        console.log(res);   //JSON
+                    })
+
+                    prismatic.newsUrl(label, function (err, res) {
+                        console.log(res);   //URL
+                    })
+                    break;
+
+            }
+        });
+    }
+
     p.init = function() {
         recognition = new webkitSpeechRecognition();
         recognition.onresult = function(event) {
             console.log(event);
 
             if (event.results.length > 0) {
-                alert(event.results[0][0].transcript);
+                var transcript = event.results[0][0].transcript;
+                p.expand(transcript, p.selected.label);   //returns JSON containing type of intent executed and data
             }
         }
 
@@ -363,7 +402,7 @@ if (Meteor.isClient) {
             if (Bounds.contains(recordButton.bounds, mouse.position) && Vertices.contains(recordButton.vertices, mouse.position)) {
 
 
-                p.newNode("Something", {
+                p.newNode("Facebook", {
                     title: "Elon Musk",
                     description: "Works at SpaceX & Tesla Lived in Los Angeles"
                 });

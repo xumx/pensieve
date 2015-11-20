@@ -32,7 +32,7 @@ Template.wit.events({
 
 });
 
-var prismatic = {
+prismatic = {
     TOKEN: 'MTQ0NzQzMzAwNDg3NQ.cHJvZA.Y2xhcmVuY2VucHlAZ21haWwuY29t.TbU4LHbm5VZ-9Gtdks6lcYCCWRA',
     URL: 'http://interest-graph.getprismatic.com/',
     search: function (query, callback) {
@@ -40,7 +40,7 @@ var prismatic = {
             params: {
                 'api-token': prismatic.TOKEN,
                 'search-query': query,
-                limit: 2
+                limit: 1
             }
         }, function (err, res) {
             callback(err, res);
