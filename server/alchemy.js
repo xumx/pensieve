@@ -28,6 +28,7 @@ Meteor.methods({
                     entities.push(response.entities[i].text);
             };
         }
+        console.log(JSON.stringify(entities,null,2));
        return entities;
     });
     },
