@@ -5073,7 +5073,7 @@ var Render = {};
             options: {
                 width: 800,
                 height: 600,
-                background: '#fafafa',
+                background: '#000',
                 wireframeBackground: '#222',
                 hasBounds: false,
                 enabled: true,

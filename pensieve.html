@@ -6,26 +6,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="robots" content="noindex">
-    <script>
-    function handleDragDropEvent(oEvent) {
-            console.log("log");
-            switch (oEvent.type) {
-                case "dragover":
-                    oEvent.preventDefault();
-                    oEvent.stopImmediatePropagation();
-                case "dragenter":
-                    oEvent.returnValue = false;
-                    oEvent.preventDefault();
-                    oEvent.stopImmediatePropagation();
-                    break;
-                case "drop":
-                    alert(oEvent.dataTransfer.getData("URL"));
-                    console.log(oEvent.dataTransfer.getData("URL"));
-                    oEvent.preventDefault();
-                    oEvent.stopImmediatePropagation();
-            }
-        }
-    </script>
 </head>
 
 <body>
@@ -37,7 +17,7 @@
     <img id="core" src="/cubecore_alpha.gif" style="z-index: 1; opacity: 0.7; position: absolute; pointer-events: none;">
   <div id="canvas" style="position:absolute; z-index: 0;"></div>
   {{#if selected.data.embed}}
-  <div class="card transition" style="position: absolute; top: {{offsetY selected.position.y}}px; left: {{offsetX selected.position.x}}px;">
+  <div class="card transition" style="z-index:10; position: absolute; top: {{offsetY selected.position.y}}px; left: {{offsetX selected.position.x}}px;">
     <div class="embed" style="width:100%;height:100%;">{{{selected.data.embed}}}</div>
     <!-- <h2 class="transition">{{selected.label}}</h2> -->
     <!-- <p>{{selected.data.description}}</p> -->

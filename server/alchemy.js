@@ -4,11 +4,8 @@ var alchemy_language = watson.alchemy_language({
     api_key: 'fe94fadcb2ce21b57514ddba3a78fd17ae4470a2'
 });
 
-//var getetities = Async.wrap(watson, 'alchemy_language');
-//var getrelations = Async.wrap(watson, 'alchemy_language');
 var wrappedEntities = Async.wrap(alchemy_language, 'entities');
 var wrappedRelations = Async.wrap(alchemy_language, 'relations');
-//Session.set('ent' , entities);
 
 Meteor.methods({
     getEntities: function(url, callback) {
@@ -46,13 +43,14 @@ Meteor.methods({
             })   
         }
         var response = wrappedRelations(params);
+        console.log(JSON.stringify(response,null,2));
         for(var i=0;i<response.relations.length;i++){
             for(var j=0;j<entities.length;j++){
                 var punctuationless = response.relations[i].subject.text.replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
                 var finalStringA = punctuationless.replace(/\s{2,}/g," ");
                 var punctuationless2 = entities[j].replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
                 var finalStringB = punctuationless2.replace(/\s{2,}/g," ");                
-                if(finalStringB===finalStringA && response.relations[i].object.text.length<40)
+                if(response.relations[i].object && finalStringA.search(finalStringB) >= 0 && response.relations[i].object.text.length<40)
                     entityRelations[j].relations.push(response.relations[i].object.text);
             }
         }
@@ -70,7 +68,7 @@ Meteor.methods({
             relations :['In person interviews','questions focused on lissts,graphs and caches','study well before applying']
          }];
 
-        console.log(JSON.stringify(entityRelations,null,2));
+        
         return entityRelations;
     }
 });

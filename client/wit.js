@@ -16,10 +16,6 @@ Template.wit.events({
     },
     'click #search': function () {
         var query = Template.instance().$('#query').val();
-        //prismatic.search(query, function (err, res) {
-        //    if (err) console.log(err);
-        //    console.log(res);
-        //})
         prismatic.news(query, function (err, res) {
             if (err) console.log(err);
             console.log(res);

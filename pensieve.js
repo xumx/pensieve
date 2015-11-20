@@ -16,18 +16,19 @@ if (Meteor.isClient) {
             switch (intent) {
 
                 case 'visualise':
-                    var entity = entities ? entities['what_to_visualise'][0].value : undefined;
+                    var entity = entities && entities['what_to_visualise'].length > 0 ? entities['what_to_visualise'][0].value : undefined;
+
                     console.log('entity = ' + entity);
 
                     if (entity) {
                         var result = _.find(graphiq, function(obj) {
-                            if (obj.title.search(new RegExp(label, 'i')) && obj.title.search(new RegExp(entity, 'i'))) {
+                            if (obj.title.search(new RegExp(label, 'i')) >= 0 && obj.title.search(new RegExp(entity, 'i')) >= 0) {
                                 return obj;
                             }
                         });
                     } else {
                         var result = _.find(graphiq, function(obj) {
-                            if (obj.title.search(new RegExp(label, 'i'))) {
+                            if (obj.title.search(new RegExp(label, 'i')) >= 0) {
                                 return obj;
                             }
                         });
@@ -55,7 +56,7 @@ if (Meteor.isClient) {
 
                     prismatic.newsUrl(label, function(err, res) {
                         p.selected.data = {
-                            embed: "<iframe seamless scrolling='no' style='overflow-x:hidden; margin-top:-70px;width:100%; height:100%;' src='" + res + "'></iframe>"
+                            embed: "<iframe frameborder='0' style='overflow-x:hidden; margin-top:-70px;width:100%; height:100%;' src='" + res + "'></iframe>"
                         }
 
                         Session.set("selected", Math.random());
@@ -90,20 +91,18 @@ if (Meteor.isClient) {
             }
         });
 
-
-
         recordButton.label = "core"
 
-
-        deleteButton = Bodies.circle(window.innerWidth - 50, window.innerHeight - 50, 35, {
+        deleteButton = Bodies.circle(window.innerWidth - 50, window.innerHeight - 50, 50, {
             render: {
                 fillStyle: "transparent",
-                strokeStyle: "#C03546",
-                lineWidth: 3
+                strokeStyle: "#000",
+                lineWidth: 0
             },
             isStatic: true,
-            label: "delete"
+            label: "."
         });
+        deleteButton.label = ""
     }
 
     p.animate = function() {
@@ -248,13 +247,23 @@ if (Meteor.isClient) {
         Session.set("selected", Math.random())
     }
 
-    p.delete = function() {}
+    p.delete = function() {
+        p.expand("show visualise of acquisition", p.selected.label);
+
+        // p.expand("show me news", p.selected.label);
+    }
 
     p.watson = function(url) {
         Meteor.call('getEntities', url, function(err, res) {
             console.log(res)
             _.each(res, function(label, key, list) {
-                p.newNode(label);
+                var exist = _.some(_engine.world.bodies, function(node) {
+                    return node.label == label
+                });
+
+                if (!exist) {
+                    p.newNode(label);
+                }
             });
         });
     }
@@ -466,7 +475,7 @@ if (Meteor.isClient) {
             enableSleeping: false,
             render: {
                 options: {
-                    background: "rgb(4,4,4)",
+                    background: "#000",
                     showIds: true,
                     wireframes: false
                 }
@@ -522,8 +531,8 @@ if (Meteor.isClient) {
 
             if (p.selected) {
                 if (Bounds.contains(p.selected.bounds, mouse.position) && Vertices.contains(p.selected.vertices, mouse.position)) {
-                    // recognition.start();
-                    p.expand("visualise", p.selected.label);
+                    recognition.start();
+                    // p.expand("visualise", p.selected.label);
                 }
             }
         });
@@ -534,19 +543,17 @@ if (Meteor.isClient) {
 
             if (p.selected) {
                 if (Bounds.contains(p.selected.bounds, mouse.position) && Vertices.contains(p.selected.vertices, mouse.position)) {
-                    // recognition.stop();
+                    recognition.stop();
                     return
                 }
             }
 
             if (Bounds.contains(recordButton.bounds, mouse.position) && Vertices.contains(recordButton.vertices, mouse.position)) {
-
-                p.newNode("Facebook");
+                p.newNode("");
                 return
             }
 
             if (Bounds.contains(deleteButton.bounds, mouse.position) && Vertices.contains(deleteButton.vertices, mouse.position)) {
-                console.log("Delete")
                 p.delete();
                 return
             }
@@ -576,13 +583,12 @@ if (Meteor.isClient) {
 
         // run the engine
         Engine.run(_engine);
-        Demo.initControls();
+        // Demo.initControls();
         // p.animate();
 
         var canvas = document.querySelector("body");
 
         function handleDragDropEvent(oEvent) {
-            console.log("log");
             switch (oEvent.type) {
                 case "dragover":
                     oEvent.preventDefault();
@@ -594,8 +600,8 @@ if (Meteor.isClient) {
                     break;
                 case "drop":
                     var url = oEvent.dataTransfer.getData("URL");
-                    var text = oEvent.dataTransfer.getData("Text");
-                    console.log(url || text);
+                    var text = oEvent.dataTransfer.getData("text");
+                    console.log(url, text);
                     p.watson(url || text);
                     p.watsonR(url || text);
                     oEvent.preventDefault();
@@ -606,10 +612,4 @@ if (Meteor.isClient) {
         canvas.ondragover = handleDragDropEvent;
         canvas.ondrop = handleDragDropEvent;
     };
-}
-
-if (Meteor.isServer) {
-    Meteor.startup(function() {
-        // code to run on server at startup
-    });
 }
