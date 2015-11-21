@@ -279,7 +279,16 @@ if (Meteor.isClient) {
                 });
                 p.select(a);
                 for (var j = 0; j < res[i].relations.length; j++) {
-                    p.newNode(res[i].relations[j]);
+                    var _label = res[i].relations[j];
+                    if (_label == 'most in demand') {
+                        p.newNode(_label, {
+                            embed: '<div style="width:100%;margin:10px 0;"><iframe src="https://w.graphiq.com/w/jOZcaRdBZI1" width="600" height="400" frameborder="0" scrolling="no" style="position:static;vertical-align:top;margin:0 auto;display:block;width:600px !important;max-width:100%;min-height:400px;"></iframe><div style="text-align:center;"><a target="_blank" href="http://foreign-employment.findthedata.com/l/12658/Facebook-Inc" style="font:14px/16px arial;color:#3d3d3d;">Facebook Inc. - Top Occupations for H-1B Visa LCAs  | FindTheData</a></div></div>'
+                        });
+                    } else {
+                        p.newNode(_label);
+                    }
+
+
                 }
             }
             p.deselect();
