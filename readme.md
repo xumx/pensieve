@@ -1,15 +1,30 @@
-== Intro == 10s
+== Intro ==
 
-Our hack is an attempt at expanding our minds through intelligence augmentation.
-it is a smart mind map where the user expanding our knowledge horizon, It feels like having a super power.
+-- show picture --
+Dumbledore: "I use the Pensieve. One simply siphons the excess thoughts from one's mind, pours them into the basin, and examines them at one's leisure. It becomes easier to spot patterns and links, you understand, when they are in this form."
+------------------
 
-== Demo == 1:20 min
+Our hack is a modern day pensieve. Just like Dumbledore, we pour out thoughts into it, and it magically becomes an extension of our mind. 
 
-A physics engine to represent information in a fun and intuitive environment.
+Let us show you the demo
 
-We used IBM Watson's language processing and deep learning capabilities to generate ideas that integrates into our own mind map. 
+20s == Demo == 
 
-We used Wit.AI
+We used a physics engine to represent knowledge and information in a fun, intuitive, touch friendly environment.
+
+Let's say you as a student have just read an article about career in Facebook, and you are really excited to find out more. 
+
+You simply drag the web link into the Pensieve, just like how Dumbledore does it.
+We use IBM Watson's language processing and deep learning capabilities to kickstart your mind map.
+
+You can rearrange the concepts to your liking. 
+
+To bring it further.
+The Pensieve automatically searches the internet for related information, literally puts that data in your finger tips.
+
+Interfacing with a thought is also extremely intuitive, a user can simply "talk" to our ideas to direct the flow of thoughts.
+
+We used Wit.ai to understand better understand your intent, and fetch the accurate data
 
 Finally, we used a Knowledge Graph API to visualize public data.
 
@@ -20,8 +35,9 @@ Finally, we used a Knowledge Graph API to visualize public data.
 == Ending == 15s
 
 Traditional mindmap is a great tool to brainstorm and write down things that you already know.
-But with our smart mind map, it BUILDS UPON what you know, and expands it with the collective intelligence.
+But with our smart mind map, it BUILDS UPON what you know, and expands it with the collective intelligence of the internet.
 
-What we have accomplished in our hack, is just a glimpse of a future where AI empowers us to think better. Hope you like it. 
+What we have accomplished in our hack, is just a glimpse of a future where everyone thinks a lot smarter, and our intelligence amplified tenfold...
 
-Thank you.
+
+Thank you. Hope you like our hack.
